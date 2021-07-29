@@ -2,7 +2,7 @@
 
 ## UFC - Quixada
 
-### Intruções para compilar
+### Instruções para compilar
 
 Baixa o FreeRtos FreeRTOSv202012.01-LTS pelo seguinte comando
 
