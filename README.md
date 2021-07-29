@@ -4,7 +4,7 @@
 
 ### Instruções para compilar
 
-Baixa o FreeRtos FreeRTOSv202012.01-LTS pelo seguinte comando
+Baixa o FreeRtos FreeRTOSv202107.00 pelo seguinte comando
 
 > https://github.com/FreeRTOS/FreeRTOS/releases/download/202107.00/FreeRTOSv202107.00.zip
 
