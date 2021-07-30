@@ -16,7 +16,7 @@ Descompacte o arquivo .zip dentro da pasta RTOS-work  com o nome FreeRTOS. Seu d
 
 - RTOS-work
   - System
-  - ESFree
+  - Include
   - FreeRTOS
     - FreeRTOS
     - FreeRTOS-Plus
