@@ -16,34 +16,34 @@
 
 //Cor do LED
 enum color{verde,vermelho};
-union ledState
+struct
 {
 	bool state;
 	enum color led_color;
-};
+}ledState;
 
 //Sensor
-union sensorData
+struct
 {
 	float sensor1;
 	float sensor2;
-};
+}sensorData;
 
 //Key
-union keyPressed
+struct
 {
 	bool readed;
 	char key;
-};
+}keyPressed;
 
 //Uso da CPU
 float cpuUse;
 
-union LCDData
+struct
 {
 	int n;
 	char * data;
-};
+}LCDData;
 
 /*------------Definição das tasks------------*/
 /* nome: controlTask
