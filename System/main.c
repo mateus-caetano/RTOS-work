@@ -63,6 +63,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+
+#include <System.h>
+
 /* Local includes. */
 #include "console.h"
 
@@ -140,30 +143,44 @@ StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
     static BaseType_t xTraceRunning = pdTRUE;
 #endif
 
-static void a (void * b)
-{
-	printf("hello\n");
-}
-
 int main( void )
 {
     vSchedulerInit ( ) ;	
+    
     /* SIGINT is not blocked by the posix port */
     signal( SIGINT, handle_sigint );
-
     vTraceEnable( TRC_START );
-
     uiTraceStart();
+    /*------------------------------------------*/
+    
+    /***Iniciando Dados***/
+    
+    struct keyPressed key;
+    struct ledState led;
+    cpuUse cpu;
+    struct LCDData lcd;
+    struct sensorData sensor;
+   
+    cpu = 0;
 
-    TaskHandle_t xHandle = NULL;
+    struct systemData data;
+    data.mb_lcd = xQueueCreate(1, sizeof(struct LCDData));
+    data.mb_cpu = xQueueCreate(1, sizeof(cpuUse));   
+    data.mb_key = xQueueCreate(1, sizeof(struct keyPressed));
+    data.mb_sensor = xQueueCreate(1, sizeof(struct sensorData));
+    data.mb_led = xQueueCreate(1, sizeof(struct ledState));
+    //Para escrever e ler use
+    //xQueueOverwrite(),xQueuePeek()
+    //Mais informações na página 146 do livro
+	
+    xQueueOverwrite(data.mb_cpu, &cpu);
+    //vSchedulerStart();
 
+  
+    //TaskHandle_t xHandle = NULL;
     //xTaskCreate( a, "Check",1020, NULL,1, NULL );
-    vSchedulerPeriodicTaskCreate (a,"Test",1020 ,NULL,1 ,&xHandle,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
-
-    vSchedulerStart();
-
+    //vSchedulerPeriodicTaskCreate (a,"Test",1020 ,NULL,1 ,&xHandle,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
     //vTaskStartScheduler();
-
     //main_full();
     return 0;
 }

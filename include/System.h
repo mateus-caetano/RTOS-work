@@ -12,38 +12,48 @@
 
 #include <FreeRTOS.h>
 #include <stdbool.h>
+#include <queue.h>
 /*------------Definição dos Dados------------*/
 
 //Cor do LED
 enum color{verde,vermelho};
-struct
+struct ledState
 {
 	bool state;
 	enum color led_color;
-}ledState;
+};
 
 //Sensor
-struct
+struct sensorData
 {
 	float sensor1;
 	float sensor2;
-}sensorData;
+};
 
 //Key
-struct
+struct keyPressed
 {
 	bool readed;
 	char key;
-}keyPressed;
+};
 
 //Uso da CPU
-float cpuUse;
+typedef float cpuUse;
 
-struct
+struct LCDData
 {
 	int n;
 	char * data;
-}LCDData;
+};
+
+struct systemData
+{
+	QueueHandle_t mb_lcd;
+	QueueHandle_t mb_cpu;
+	QueueHandle_t mb_key;
+	QueueHandle_t mb_sensor;
+	QueueHandle_t mb_led;
+};
 
 /*------------Definição das tasks------------*/
 /* nome: controlTask
