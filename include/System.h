@@ -11,6 +11,39 @@
  */
 
 #include <FreeRTOS.h>
+#include <stdbool.h>
+/*------------Definição dos Dados------------*/
+
+//Cor do LED
+enum color{verde,vermelho};
+union ledState
+{
+	bool state;
+	enum color led_color;
+};
+
+//Sensor
+union sensorData
+{
+	float sensor1;
+	float sensor2;
+};
+
+//Key
+union keyPressed
+{
+	bool readed;
+	char key;
+};
+
+//Uso da CPU
+float cpuUse;
+
+union LCDData
+{
+	int n;
+	char * data;
+};
 
 /*------------Definição das tasks------------*/
 /* nome: controlTask
