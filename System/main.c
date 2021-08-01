@@ -196,10 +196,13 @@ int main( void )
     vSchedulerPeriodicTaskCreate(monitor,"monitor",1020 ,(void *)&data,1,&cpuTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(3), pdMS_TO_TICKS(2),pdMS_TO_TICKS(2)) ;
 
     /*Monitor*/
-    //Usando o teorema de Teorema de nyquist para setar o periodo
+    //Usando o teorema de nyquist para setar o periodo
     TaskHandle_t lToggle = NULL;
     vSchedulerPeriodicTaskCreate(ledToggle,"ledToggle",1020 ,(void *)&data,1,&lToggle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(1e3), pdMS_TO_TICKS(1),pdMS_TO_TICKS(1)) ;
 
+    /*Scanner*/
+    TaskHandle_t scanHandle = NULL;
+    vSchedulerPeriodicTaskCreate(taskScanner,"scanner",1020 ,(void *)&data,1,&scanHandle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(15), pdMS_TO_TICKS(5),pdMS_TO_TICKS(5)) ;
 
 
 
