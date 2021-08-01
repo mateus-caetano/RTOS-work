@@ -69,7 +69,7 @@ struct systemData
  * 	ledState
  * 	cpuUse
  */
-static void controlTask(void * controlData);
+ void controlTask(void * controlData);
 
 /* nome: ledToggle
  * Função:
@@ -89,7 +89,7 @@ static void controlTask(void * controlData);
  * 	keyPressed
  * 	LCDData
  */
-static void userTask(void * data);
+ void userTask(void * data);
 
 /* @author Pedro
  * nome: taskScanner
@@ -99,16 +99,16 @@ static void userTask(void * data);
  * Parametros: Ela deve ter acesso aos seguintes dados
  * 	keyPressed
  */
-static void taskScanner(void * keyPressed);
+ void taskScanner(void * keyPressed);
 
 /* @author Matheus
  * nome: userLCD
  * Função:
  * 	Atualiza o LCD
- * Parametros: Ela deve ter acesso aos seguintes dados
+ * Pa	rametros: Ela deve ter acesso aos seguintes dados
  * 	LCDData
  */
-static void taskLCD(void * data);
+ void taskLCD(void * data);
 
 /* @author Matheus
  * nome: taskSensores
@@ -117,8 +117,8 @@ static void taskLCD(void * data);
  * Parametros: Ela deve ter acesso aos seguintes dados
  * 	sensorData
  */
-void taskSensores(void * data);
-static void PDA(void * controlData);
+ void taskSensores(void * data);
+ void PDA(void * controlData);
 
 /* nome: taskSensores
  * Função:
@@ -130,5 +130,5 @@ static void PDA(void * controlData);
  *
  * Atualiza o uso da cpu. 
  */
-static void monitor(void * data);
+ void monitor(void * data);
 #endif

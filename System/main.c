@@ -143,15 +143,21 @@ StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
     static BaseType_t xTraceRunning = pdTRUE;
 #endif
 
+static void test(void * a)
+{
+	
+}
 int main( void )
 {
-    vSchedulerInit ( ) ;	
-    
-    /* SIGINT is not blocked by the posix port */
+        
+   vSchedulerInit ( ) ;	
+
+      	/* SIGINT is not blocked by the posix port */
     signal( SIGINT, handle_sigint );
     vTraceEnable( TRC_START );
     uiTraceStart();
     /*------------------------------------------*/
+   
     
     /***Iniciando Dados***/
     
@@ -162,7 +168,7 @@ int main( void )
     struct sensorData sensor;
    
     cpu = 0;
-
+    
     struct systemData data;
     data.mb_lcd = xQueueCreate(1, sizeof(struct LCDData));
     data.mb_cpu = xQueueCreate(1, sizeof(cpuUse));   
@@ -174,9 +180,25 @@ int main( void )
     //Mais informações na página 146 do livro
 	
     xQueueOverwrite(data.mb_cpu, &cpu);
-    //vSchedulerStart();
+    
+    //----Iniciando Tasks
+
+    /*control Task*/
+    TaskHandle_t crtTask = NULL;
+    vSchedulerPeriodicTaskCreate(controlTask,"controlTask",1020 ,(void *)&data,2,&crtTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(10), pdMS_TO_TICKS(5),pdMS_TO_TICKS(15)) ;
+
+    /*Monitor*/
+
+    TaskHandle_t xHandle = NULL;
+    vSchedulerPeriodicTaskCreate (taskSensores,"taskSensores",1020 ,(void *)&data,1,&xHandle ,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
+    
+    vSchedulerStart();
 
   
+
+
+
+    //---------------------------------------------------------
     //TaskHandle_t xHandle = NULL;
     //xTaskCreate( a, "Check",1020, NULL,1, NULL );
     //vSchedulerPeriodicTaskCreate (a,"Test",1020 ,NULL,1 ,&xHandle,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
