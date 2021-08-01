@@ -9,4 +9,5 @@ void ledToggle(void * data)
 	xQueuePeek(lData->mb_led,&led,0);
 	led.state ^= 1;
 	xQueueOverwrite(lData->mb_led,&led);
+	vTaskDelay(pdMS_TO_TICKS(50));
 }

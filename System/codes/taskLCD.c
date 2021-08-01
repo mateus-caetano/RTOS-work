@@ -21,4 +21,13 @@ void taskLCD(void *data)
     printf("sensor 1 data: %f\n", sensorsData.sensor1);
     printf("sensor 2 data: %f\n", sensorsData.sensor2);
     printf("CPU use: %.2f\n", systemUse);
+
+    lcd.data = "";
+    key.key = "";
+    led.led_color = 0;
+    sensorsData.sensor1 = 0;
+    sensorsData.sensor1 = 0;
+    systemUse = 0;
+
+    xQueueOverwrite(mb->mb_lcd, &lcd);
 }
