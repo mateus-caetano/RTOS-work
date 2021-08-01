@@ -1,6 +1,6 @@
 #include <System.h>
 
-#define ECHO
+//#define ECHO
 void controlTask(void * controlData)
 {
 	struct systemData * data = (struct systemData *) controlData;
