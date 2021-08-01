@@ -208,7 +208,10 @@ int main( void )
 
     TaskHandle_t xHandle = NULL;
     vSchedulerPeriodicTaskCreate (taskSensores,"taskSensores",1020 ,(void *)&data,1,&xHandle ,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
-    
+
+    TaskHandle_t userHandle = NULL;
+    vSchedulerPeriodicTaskCreate (userTask,"taskUser",1020 ,(void *)&data,1,&userHandle ,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
+
     vSchedulerStart();
 
   
