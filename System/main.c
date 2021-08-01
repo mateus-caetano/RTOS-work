@@ -63,69 +63,68 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-
 #include <System.h>
 
 /* Local includes. */
 #include "console.h"
 
-#define    BLINKY_DEMO    0
-#define    FULL_DEMO      1
+#define BLINKY_DEMO 0
+#define FULL_DEMO 1
 
 #ifdef BUILD_DIR
-    #define BUILD         BUILD_DIR
+#define BUILD BUILD_DIR
 #else
-    #define BUILD         "./"
+#define BUILD "./"
 #endif
 
 /* Demo type is passed as an argument */
 #ifdef USER_DEMO
-    #define     mainSELECTED_APPLICATION    USER_DEMO
+#define mainSELECTED_APPLICATION USER_DEMO
 #else /* Default Setting */
-    #define    mainSELECTED_APPLICATION     FULL_DEMO
+#define mainSELECTED_APPLICATION FULL_DEMO
 #endif
 
 /* This demo uses heap_3.c (the libc provided malloc() and free()). */
 
 /*-----------------------------------------------------------*/
-extern void main_blinky( void );
-extern void main_full( void );
-static void traceOnEnter( void );
+extern void main_blinky(void);
+extern void main_full(void);
+static void traceOnEnter(void);
 
 /*
  * Only the comprehensive demo uses application hook (callback) functions.  See
  * http://www.freertos.org/a00016.html for more information.
  */
-void vFullDemoTickHookFunction( void );
-void vFullDemoIdleFunction( void );
+void vFullDemoTickHookFunction(void);
+void vFullDemoIdleFunction(void);
 
 /*
  * Prototypes for the standard FreeRTOS application hook (callback) functions
  * implemented within this file.  See http://www.freertos.org/a00016.html .
  */
-void vApplicationMallocFailedHook( void );
-void vApplicationIdleHook( void );
-void vApplicationStackOverflowHook( TaskHandle_t pxTask,
-                                    char * pcTaskName );
-	
-void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
-                                    StackType_t ** ppxIdleTaskStackBuffer,
-                                    uint32_t * pulIdleTaskStackSize );
-void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
-                                     StackType_t ** ppxTimerTaskStackBuffer,
-                                     uint32_t * pulTimerTaskStackSize );
+void vApplicationMallocFailedHook(void);
+void vApplicationIdleHook(void);
+void vApplicationStackOverflowHook(TaskHandle_t pxTask,
+                                   char *pcTaskName);
+
+void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
+                                   StackType_t **ppxIdleTaskStackBuffer,
+                                   uint32_t *pulIdleTaskStackSize);
+void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer,
+                                    StackType_t **ppxTimerTaskStackBuffer,
+                                    uint32_t *pulTimerTaskStackSize);
 
 /*
  * Writes trace data to a disk file when the trace recording is stopped.
  * This function will simply overwrite any trace files that already exist.
  */
-static void prvSaveTraceFile( void );
+static void prvSaveTraceFile(void);
 
 /*
  * Signal handler for Ctrl_C to cause the program to exit, and generate the
  * profiling info.
  */
-static void handle_sigint( int signal );
+static void handle_sigint(int signal);
 
 /*-----------------------------------------------------------*/
 
@@ -134,83 +133,77 @@ static void handle_sigint( int signal );
  * and timer tasks.  This is the stack that will be used by the timer task.  It is
  * declared here, as a global, so it can be checked by a test that is implemented
  * in a different file. */
-StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
+StackType_t uxTimerTaskStack[configTIMER_TASK_STACK_DEPTH];
 
 /* Notes if the trace is running or not. */
-#if ( projCOVERAGE_TEST == 1 )
-    static BaseType_t xTraceRunning = pdFALSE;
+#if (projCOVERAGE_TEST == 1)
+static BaseType_t xTraceRunning = pdFALSE;
 #else
-    static BaseType_t xTraceRunning = pdTRUE;
+static BaseType_t xTraceRunning = pdTRUE;
 #endif
 
-static void test(void * a)
+static void test(void *a)
 {
-	
 }
-int main( void )
+int main(void)
 {
-        
-   vSchedulerInit ( ) ;	
 
-      	/* SIGINT is not blocked by the posix port */
-    signal( SIGINT, handle_sigint );
-    vTraceEnable( TRC_START );
+    vSchedulerInit();
+
+    /* SIGINT is not blocked by the posix port */
+    signal(SIGINT, handle_sigint);
+    vTraceEnable(TRC_START);
     uiTraceStart();
     /*------------------------------------------*/
-   
-    
+
     /***Iniciando Dados***/
-    
+
     struct keyPressed key;
     struct ledState led;
     cpuUse cpu;
     struct LCDData lcd;
     struct sensorData sensor;
-   
+
     cpu = 0;
     led.state = 0;
     led.led_color = verde;
-    
+
     struct systemData data;
     data.mb_lcd = xQueueCreate(1, sizeof(struct LCDData));
-    data.mb_cpu = xQueueCreate(1, sizeof(cpuUse));   
+    data.mb_cpu = xQueueCreate(1, sizeof(cpuUse));
     data.mb_key = xQueueCreate(1, sizeof(struct keyPressed));
     data.mb_sensor = xQueueCreate(1, sizeof(struct sensorData));
     data.mb_led = xQueueCreate(1, sizeof(struct ledState));
     //Para escrever e ler use
     //xQueueOverwrite(),xQueuePeek()
     //Mais informações na página 146 do livro
-	
+
     xQueueOverwrite(data.mb_cpu, &cpu);
     xQueueOverwrite(data.mb_led, &led);
- 
+
     //----Iniciando Tasks
 
     /*control Task*/
     TaskHandle_t crtTask = NULL;
-    vSchedulerPeriodicTaskCreate(controlTask,"controlTask",1020 ,(void *)&data,2,&crtTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(10), pdMS_TO_TICKS(5),pdMS_TO_TICKS(5)) ;
+    vSchedulerPeriodicTaskCreate(controlTask, "controlTask", 1020, (void *)&data, 2, &crtTask, pdMS_TO_TICKS(0), pdMS_TO_TICKS(10), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
 
     /*Monitor*/
     //Usando o teorema de Teorema de nyquist para setar o periodo
     TaskHandle_t cpuTask = NULL;
-    vSchedulerPeriodicTaskCreate(monitor,"monitor",1020 ,(void *)&data,1,&cpuTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(3), pdMS_TO_TICKS(2),pdMS_TO_TICKS(2)) ;
+    vSchedulerPeriodicTaskCreate(monitor, "monitor", 1020, (void *)&data, 1, &cpuTask, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(2), pdMS_TO_TICKS(2));
 
     /*Monitor*/
     //Usando o teorema de Teorema de nyquist para setar o periodo
     TaskHandle_t lToggle = NULL;
-    vSchedulerPeriodicTaskCreate(ledToggle,"ledToggle",1020 ,(void *)&data,1,&lToggle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(1e3), pdMS_TO_TICKS(1),pdMS_TO_TICKS(1)) ;
+    vSchedulerPeriodicTaskCreate(ledToggle, "ledToggle", 1020, (void *)&data, 1, &lToggle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(1e3), pdMS_TO_TICKS(1), pdMS_TO_TICKS(1));
 
+    TaskHandle_t sensorsHandle = NULL;
+    vSchedulerPeriodicTaskCreate(taskSensores, "taskSensores", 1020, (void *)&data, 1, &sensorsHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
 
+    // TaskHandle_t userTask = NULL;
+    // vSchedulerPeriodicTaskCreate(userTask, "userTask", 1020, (void *)&data, 1, &userTask, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
 
-
-    TaskHandle_t xHandle = NULL;
-    vSchedulerPeriodicTaskCreate (taskSensores,"taskSensores",1020 ,(void *)&data,1,&xHandle ,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
-    
     vSchedulerStart();
-
-  
-
-
 
     //---------------------------------------------------------
     //TaskHandle_t xHandle = NULL;
@@ -222,7 +215,7 @@ int main( void )
 }
 /*-----------------------------------------------------------*/
 
-void vApplicationMallocFailedHook( void )
+void vApplicationMallocFailedHook(void)
 {
     /* vApplicationMallocFailedHook() will only be called if
      * configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
@@ -236,11 +229,11 @@ void vApplicationMallocFailedHook( void )
      * (although it does not provide information on how the remaining heap might be
      * fragmented).  See http://www.freertos.org/a00111.html for more
      * information. */
-    vAssertCalled( __FILE__, __LINE__ );
+    vAssertCalled(__FILE__, __LINE__);
 }
 /*-----------------------------------------------------------*/
 
-void _vApplicationIdleHook( void )
+void _vApplicationIdleHook(void)
 {
     /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
      * to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
@@ -252,74 +245,72 @@ void _vApplicationIdleHook( void )
      * because it is the responsibility of the idle task to clean up memory
      * allocated by the kernel to any task that has since deleted itself. */
 
-
     //usleep( 15000 );
     //traceOnEnter();
 
-    #if ( mainSELECTED_APPLICATION == FULL_DEMO )
-        {
-            /* Call the idle task processing used by the full demo.  The simple
+#if (mainSELECTED_APPLICATION == FULL_DEMO)
+    {
+        /* Call the idle task processing used by the full demo.  The simple
              * blinky demo does not use the idle task hook. */
-            //vFullDemoIdleFunction();
-        }
-    #endif
+        //vFullDemoIdleFunction();
+    }
+#endif
 }
 /*-----------------------------------------------------------*/
 
-void vApplicationStackOverflowHook( TaskHandle_t pxTask,
-                                    char * pcTaskName )
+void vApplicationStackOverflowHook(TaskHandle_t pxTask,
+                                   char *pcTaskName)
 {
-    ( void ) pcTaskName;
-    ( void ) pxTask;
+    (void)pcTaskName;
+    (void)pxTask;
 
     /* Run time stack overflow checking is performed if
      * configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
      * function is called if a stack overflow is detected.  This function is
      * provided as an example only as stack overflow checking does not function
      * when running the FreeRTOS POSIX port. */
-    vAssertCalled( __FILE__, __LINE__ );
+    vAssertCalled(__FILE__, __LINE__);
 }
 /*-----------------------------------------------------------*/
-
 
 void traceOnEnter()
 {
-    #if ( TRACE_ON_ENTER == 1 )
-        int xReturn;
-        struct timeval tv = { 0L, 0L };
-        fd_set fds;
+#if (TRACE_ON_ENTER == 1)
+    int xReturn;
+    struct timeval tv = {0L, 0L};
+    fd_set fds;
 
-        FD_ZERO( &fds );
-        FD_SET( STDIN_FILENO, &fds );
+    FD_ZERO(&fds);
+    FD_SET(STDIN_FILENO, &fds);
 
-        xReturn = select( STDIN_FILENO + 1, &fds, NULL, NULL, &tv );
+    xReturn = select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv);
 
-        if( xReturn > 0 )
+    if (xReturn > 0)
+    {
+        if (xTraceRunning == pdTRUE)
         {
-            if( xTraceRunning == pdTRUE )
-            {
-                prvSaveTraceFile();
-            }
-
-            /* clear the buffer */
-            char buffer[ 0 ];
-            read( STDIN_FILENO, &buffer, 1 );
+            prvSaveTraceFile();
         }
-    #endif /* if ( TRACE_ON_ENTER == 1 ) */
+
+        /* clear the buffer */
+        char buffer[0];
+        read(STDIN_FILENO, &buffer, 1);
+    }
+#endif /* if ( TRACE_ON_ENTER == 1 ) */
 }
 
-void vLoggingPrintf( const char * pcFormat,
-                     ... )
+void vLoggingPrintf(const char *pcFormat,
+                    ...)
 {
     va_list arg;
 
-    va_start( arg, pcFormat );
-    vprintf( pcFormat, arg );
-    va_end( arg );
+    va_start(arg, pcFormat);
+    vprintf(pcFormat, arg);
+    va_end(arg);
 }
 /*-----------------------------------------------------------*/
 
-void vApplicationDaemonTaskStartupHook( void )
+void vApplicationDaemonTaskStartupHook(void)
 {
     /* This function will be called once only, when the daemon task starts to
      * execute    (sometimes called the timer task).  This is useful if the
@@ -328,8 +319,8 @@ void vApplicationDaemonTaskStartupHook( void )
 }
 /*-----------------------------------------------------------*/
 
-void vAssertCalled( const char * const pcFileName,
-                    unsigned long ulLine )
+void vAssertCalled(const char *const pcFileName,
+                   unsigned long ulLine)
 {
     static BaseType_t xPrinted = pdFALSE;
     volatile uint32_t ulSetToNonZeroInDebuggerToContinue = 0;
@@ -338,18 +329,17 @@ void vAssertCalled( const char * const pcFileName,
      * http://www.freertos.org/a00110.html#configASSERT for more information. */
 
     /* Parameters are not used. */
-    ( void ) ulLine;
-    ( void ) pcFileName;
-
+    (void)ulLine;
+    (void)pcFileName;
 
     taskENTER_CRITICAL();
     {
         /* Stop the trace recording. */
-        if( xPrinted == pdFALSE )
+        if (xPrinted == pdFALSE)
         {
             xPrinted = pdTRUE;
 
-            if( xTraceRunning == pdTRUE )
+            if (xTraceRunning == pdTRUE)
             {
                 prvSaveTraceFile();
             }
@@ -358,54 +348,54 @@ void vAssertCalled( const char * const pcFileName,
         /* You can step out of this function to debug the assertion by using
          * the debugger to set ulSetToNonZeroInDebuggerToContinue to a non-zero
          * value. */
-        while( ulSetToNonZeroInDebuggerToContinue == 0 )
+        while (ulSetToNonZeroInDebuggerToContinue == 0)
         {
-            __asm volatile ( "NOP" );
-            __asm volatile ( "NOP" );
+            __asm volatile("NOP");
+            __asm volatile("NOP");
         }
     }
     taskEXIT_CRITICAL();
 }
 /*-----------------------------------------------------------*/
 
-static void prvSaveTraceFile( void )
+static void prvSaveTraceFile(void)
 {
-    /* Tracing is not used when code coverage analysis is being performed. */
-    #if ( projCOVERAGE_TEST != 1 )
+/* Tracing is not used when code coverage analysis is being performed. */
+#if (projCOVERAGE_TEST != 1)
+    {
+        FILE *pxOutputFile;
+
+        vTraceStop();
+
+        pxOutputFile = fopen("Trace.dump", "wb");
+
+        if (pxOutputFile != NULL)
         {
-            FILE * pxOutputFile;
-
-            vTraceStop();
-
-            pxOutputFile = fopen( "Trace.dump", "wb" );
-
-            if( pxOutputFile != NULL )
-            {
-                fwrite( RecorderDataPtr, sizeof( RecorderDataType ), 1, pxOutputFile );
-                fclose( pxOutputFile );
-                printf( "\r\nTrace output saved to Trace.dump\r\n" );
-            }
-            else
-            {
-                printf( "\r\nFailed to create trace dump file\r\n" );
-            }
+            fwrite(RecorderDataPtr, sizeof(RecorderDataType), 1, pxOutputFile);
+            fclose(pxOutputFile);
+            printf("\r\nTrace output saved to Trace.dump\r\n");
         }
-    #endif /* if ( projCOVERAGE_TEST != 1 ) */
+        else
+        {
+            printf("\r\nFailed to create trace dump file\r\n");
+        }
+    }
+#endif /* if ( projCOVERAGE_TEST != 1 ) */
 }
 /*-----------------------------------------------------------*/
 
 /* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
  * implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
  * used by the Idle task. */
-void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
-                                    StackType_t ** ppxIdleTaskStackBuffer,
-                                    uint32_t * pulIdleTaskStackSize )
+void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
+                                   StackType_t **ppxIdleTaskStackBuffer,
+                                   uint32_t *pulIdleTaskStackSize)
 {
-/* If the buffers to be provided to the Idle task are declared inside this
+    /* If the buffers to be provided to the Idle task are declared inside this
  * function then they must be declared static - otherwise they will be allocated on
  * the stack and so not exists after this function exits. */
     static StaticTask_t xIdleTaskTCB;
-    static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
+    static StackType_t uxIdleTaskStack[configMINIMAL_STACK_SIZE];
 
     /* Pass out a pointer to the StaticTask_t structure in which the Idle task's
      * state will be stored. */
@@ -424,11 +414,11 @@ void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
 /* configUSE_STATIC_ALLOCATION and configUSE_TIMERS are both set to 1, so the
  * application must provide an implementation of vApplicationGetTimerTaskMemory()
  * to provide the memory that is used by the Timer service task. */
-void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
-                                     StackType_t ** ppxTimerTaskStackBuffer,
-                                     uint32_t * pulTimerTaskStackSize )
+void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer,
+                                    StackType_t **ppxTimerTaskStackBuffer,
+                                    uint32_t *pulTimerTaskStackSize)
 {
-/* If the buffers to be provided to the Timer task are declared inside this
+    /* If the buffers to be provided to the Timer task are declared inside this
  * function then they must be declared static - otherwise they will be allocated on
  * the stack and so not exists after this function exits. */
     static StaticTask_t xTimerTaskTCB;
@@ -446,16 +436,16 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
     *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
 }
 
-void handle_sigint( int signal )
+void handle_sigint(int signal)
 {
     int xReturn;
 
-    xReturn = chdir( BUILD ); /* changing dir to place gmon.out inside build */
+    xReturn = chdir(BUILD); /* changing dir to place gmon.out inside build */
 
-    if( xReturn == -1 )
+    if (xReturn == -1)
     {
-        printf( "chdir into %s error is %d\n", BUILD, errno );
+        printf("chdir into %s error is %d\n", BUILD, errno);
     }
 
-    exit( 2 );
+    exit(2);
 }
