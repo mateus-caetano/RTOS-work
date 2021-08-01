@@ -168,6 +168,8 @@ int main( void )
     struct sensorData sensor;
    
     cpu = 0;
+    led.state = 0;
+    led.led_color = verde;
     
     struct systemData data;
     data.mb_lcd = xQueueCreate(1, sizeof(struct LCDData));
@@ -180,17 +182,24 @@ int main( void )
     //Mais informações na página 146 do livro
 	
     xQueueOverwrite(data.mb_cpu, &cpu);
-    
+    xQueueOverwrite(data.mb_led, &led);
+ 
     //----Iniciando Tasks
 
     /*control Task*/
     TaskHandle_t crtTask = NULL;
-    vSchedulerPeriodicTaskCreate(controlTask,"controlTask",1020 ,(void *)&data,2,&crtTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(10), pdMS_TO_TICKS(5),pdMS_TO_TICKS(15)) ;
+    vSchedulerPeriodicTaskCreate(controlTask,"controlTask",1020 ,(void *)&data,2,&crtTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(10), pdMS_TO_TICKS(5),pdMS_TO_TICKS(5)) ;
 
     /*Monitor*/
     //Usando o teorema de Teorema de nyquist para setar o periodo
     TaskHandle_t cpuTask = NULL;
     vSchedulerPeriodicTaskCreate(monitor,"monitor",1020 ,(void *)&data,1,&cpuTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(3), pdMS_TO_TICKS(2),pdMS_TO_TICKS(2)) ;
+
+    /*Monitor*/
+    //Usando o teorema de Teorema de nyquist para setar o periodo
+    TaskHandle_t lToggle = NULL;
+    vSchedulerPeriodicTaskCreate(ledToggle,"ledToggle",1020 ,(void *)&data,1,&lToggle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(1e3), pdMS_TO_TICKS(1),pdMS_TO_TICKS(1)) ;
+
 
 
 

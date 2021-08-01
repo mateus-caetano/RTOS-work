@@ -77,7 +77,7 @@ struct systemData
  * Parametros: Ela deve ter acesso aos seguintes dados
  * 	ledState
  */
-//static void ledToggle(void *ledState);
+ void ledToggle(void * data);
 
 /* @author Pedro
  * nome: userTask
