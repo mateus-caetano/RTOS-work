@@ -1,5 +1,8 @@
 #include <System.h>
 
+char * lcdMsg_pressed = "Botão pressionadoi\n";
+char * lcdMsg_npressed = "";
+
 void userTask(void * data){
     struct systemData * userData = (struct systemData *) data;
 
@@ -15,17 +18,24 @@ void userTask(void * data){
     struct LCDData LCD;
     xQueuePeek(userData->mb_lcd,&LCD,0);
     
-    if(led.led_color == 1 && key.key == '1'){
-        LCD.n = 20;
-        LCD.data = "Testando a entrada";
-        printf("%s\n", LCD.data);
-    }else{
-        LCD.n = 20;
-        LCD.data = "Testando o LCD";
-        printf("%s\n", LCD.data);
+    //xSchedulerSporadicJobCreate(taskLCD,"taskLcd",data,pdMS_TO_TICKS(10),pdMS_TO_TICKS(5));
+
+    if(key.key == '1'){
+        TaskHandle_t handler;
+	key.key='0';
+        LCD.data = lcdMsg_pressed;
+        xQueueOverwrite(userData->mb_key, &key);
+        xQueueOverwrite(userData->mb_lcd, &LCD); 
+    }
+    else
+    {
+	//LCD.data = lcdMsg_npressed;
+        xQueueOverwrite(userData->mb_key, &key);
+        xQueueOverwrite(userData->mb_lcd, &LCD); 
+
     }
 
-    xQueueOverwrite(userData->mb_lcd, &LCD);
+   
 
 
 	

@@ -201,8 +201,15 @@ int main(void)
     vSchedulerPeriodicTaskCreate(taskSensores, "taskSensores", 1020, (void *)&data, 1, &sensorsHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
 
     TaskHandle_t userHandle = NULL;
-    vSchedulerPeriodicTaskCreate (userTask,"taskUser",1020 ,(void *)&data,1,&userHandle ,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
+    vSchedulerPeriodicTaskCreate (userTask,"taskUser",1020 ,(void *)&data,1,&userHandle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(10), pdMS_TO_TICKS(10),pdMS_TO_TICKS(10)) ;
 
+    /*LCD*/
+    TaskHandle_t lcdHandle = NULL;
+    vSchedulerPeriodicTaskCreate (taskLCD,"lcd",1020 ,(void *)&data,1,&lcdHandle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(50), pdMS_TO_TICKS(5),pdMS_TO_TICKS(5));
+
+
+    TaskHandle_t scanHandle = NULL;
+    vSchedulerPeriodicTaskCreate (taskScanner,"scanner",1020 ,(void *)&data,1,&scanHandle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(50), pdMS_TO_TICKS(5),pdMS_TO_TICKS(5));
     vSchedulerStart();
 
     //---------------------------------------------------------
