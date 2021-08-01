@@ -55,8 +55,10 @@ struct systemData
 	QueueHandle_t mb_led;
 };
 
+
 /*------------Definição das tasks------------*/
-/* nome: controlTask
+/* @author Thiago
+ * nome: controlTask
  * Função:
  * 	Requisitar os dados dos sensores por meio de uma mail box com um dead line de 10ms
  * 	Verificar comandos enviados pela userTask
@@ -75,9 +77,10 @@ static void controlTask(void * controlData);
  * Parametros: Ela deve ter acesso aos seguintes dados
  * 	ledState
  */
-static void ledToggle(void *ledState);
+//static void ledToggle(void *ledState);
 
-/* nome: userTask
+/* @author Pedro
+ * nome: userTask
  * Função:
  * 	Espera a entrada do teclado numérico, e atualiza os dados do LCD.
  *	Como não temos um led físico, ele deve mostrar o estado do led
@@ -88,7 +91,8 @@ static void ledToggle(void *ledState);
  */
 static void userTask(void * data);
 
-/* nome: taskScanner
+/* @author Pedro
+ * nome: taskScanner
  * Função:
  * 	Espera a entrada do teclado numérico e informa
  * 	a userTask
@@ -97,7 +101,8 @@ static void userTask(void * data);
  */
 static void taskScanner(void * keyPressed);
 
-/* nome: userLCD
+/* @author Matheus
+ * nome: userLCD
  * Função:
  * 	Atualiza o LCD
  * Parametros: Ela deve ter acesso aos seguintes dados
@@ -105,13 +110,14 @@ static void taskScanner(void * keyPressed);
  */
 static void taskLCD(void * data);
 
-/* nome: taskSensores
+/* @author Matheus
+ * nome: taskSensores
  * Função:
  * 	Atualiza os sensores
  * Parametros: Ela deve ter acesso aos seguintes dados
  * 	sensorData
  */
-static void taskSensores(void * barramento);
+void taskSensores(void * data);
 static void PDA(void * controlData);
 
 /* nome: taskSensores
@@ -119,6 +125,10 @@ static void PDA(void * controlData);
  * 	Atualiza o uso da CPU
  * Parametros: Ela deve ter acesso aos seguintes dados
  * 	cpuUse
+ */
+/* @author: Thiago
+ *
+ * Atualiza o uso da cpu. 
  */
 static void monitor(void * data);
 #endif
