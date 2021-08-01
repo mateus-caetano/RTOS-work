@@ -188,6 +188,11 @@ int main( void )
     vSchedulerPeriodicTaskCreate(controlTask,"controlTask",1020 ,(void *)&data,2,&crtTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(10), pdMS_TO_TICKS(5),pdMS_TO_TICKS(15)) ;
 
     /*Monitor*/
+    //Usando o teorema de Teorema de nyquist para setar o periodo
+    TaskHandle_t cpuTask = NULL;
+    vSchedulerPeriodicTaskCreate(monitor,"monitor",1020 ,(void *)&data,1,&cpuTask ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(3), pdMS_TO_TICKS(2),pdMS_TO_TICKS(2)) ;
+
+
 
     TaskHandle_t xHandle = NULL;
     vSchedulerPeriodicTaskCreate (taskSensores,"taskSensores",1020 ,(void *)&data,1,&xHandle ,pdMS_TO_TICKS(50),pdMS_TO_TICKS(500), pdMS_TO_TICKS(100),pdMS_TO_TICKS(500)) ;
@@ -226,7 +231,7 @@ void vApplicationMallocFailedHook( void )
 }
 /*-----------------------------------------------------------*/
 
-void vApplicationIdleHook( void )
+void _vApplicationIdleHook( void )
 {
     /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
      * to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
@@ -239,14 +244,14 @@ void vApplicationIdleHook( void )
      * allocated by the kernel to any task that has since deleted itself. */
 
 
-    usleep( 15000 );
-    traceOnEnter();
+    //usleep( 15000 );
+    //traceOnEnter();
 
     #if ( mainSELECTED_APPLICATION == FULL_DEMO )
         {
             /* Call the idle task processing used by the full demo.  The simple
              * blinky demo does not use the idle task hook. */
-            vFullDemoIdleFunction();
+            //vFullDemoIdleFunction();
         }
     #endif
 }
