@@ -1,6 +1,6 @@
 #include <System.h>
 
-#define ECHO
+//#define ECHO
 void controlTask(void * controlData)
 {
 	struct systemData * data = (struct systemData *) controlData;
@@ -19,6 +19,7 @@ void controlTask(void * controlData)
 	/*Requisitando estado dos leds*/
 	struct ledState led;
 	xQueuePeek(data->mb_led,&led,pdMS_TO_TICKS(1));
+
 
 	/*Atualizando LED*/
 	if(use > 0.8)
