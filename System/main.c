@@ -195,7 +195,7 @@ int main(void)
     /*Monitor*/
     //Usando o teorema de nyquist para setar o periodo
     TaskHandle_t lToggle = NULL;
-    vSchedulerPeriodicTaskCreate(ledToggle, "ledToggle", 1020, (void *)&data, 1, &lToggle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(1e3), pdMS_TO_TICKS(1), pdMS_TO_TICKS(1));
+    vSchedulerPeriodicTaskCreate(ledToggle, "ledToggle", 1020, (void *)&data, 1, &lToggle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(1e3), pdMS_TO_TICKS(50), pdMS_TO_TICKS(50));
 
     TaskHandle_t sensorsHandle = NULL;
     vSchedulerPeriodicTaskCreate(taskSensores, "taskSensores", 1020, (void *)&data, 1, &sensorsHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
