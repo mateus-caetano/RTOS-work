@@ -194,7 +194,7 @@ int main(void)
     /*Monitor*/
     //Usando o teorema de Teorema de nyquist para setar o periodo
     TaskHandle_t cpuTask = NULL;
-    vSchedulerPeriodicTaskCreate(monitor, "monitor", 1020, (void *)&data, 0, &cpuTask, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(2), pdMS_TO_TICKS(2));
+    vSchedulerPeriodicTaskCreate(monitor, "monitor", 1020, (void *)&data,0, &cpuTask, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(2), pdMS_TO_TICKS(2));
 
     /*Monitor*/
     //Usando o teorema de nyquist para setar o periodo
@@ -202,18 +202,18 @@ int main(void)
     vSchedulerPeriodicTaskCreate(ledToggle, "ledToggle", 1020, (void *)&data, 0, &lToggle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(1e3), pdMS_TO_TICKS(50), pdMS_TO_TICKS(50));
 
     TaskHandle_t sensorsHandle = NULL;
-    vSchedulerPeriodicTaskCreate(taskSensores, "taskSensores", 1020, (void *)&data, 2, &sensorsHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
+    vSchedulerPeriodicTaskCreate(taskSensores, "taskSensores", 1020, (void *)&data,2, &sensorsHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(3), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
 
     TaskHandle_t userHandle = NULL;
-    vSchedulerPeriodicTaskCreate(userTask, "taskUser", 1020, (void *)&data, 1, &userHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(10), pdMS_TO_TICKS(10), pdMS_TO_TICKS(10));
+    vSchedulerPeriodicTaskCreate (userTask,"taskUser",1020 ,(void *)&data,1,&userHandle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(10), pdMS_TO_TICKS(10),pdMS_TO_TICKS(10)) ;
 
     /*LCD*/
     TaskHandle_t lcdHandle = NULL;
-    vSchedulerPeriodicTaskCreate(taskLCD, "lcd", 1020, (void *)&data, 1, &lcdHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(50), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
+    vSchedulerPeriodicTaskCreate (taskLCD,"lcd",1020 ,(void *)&data,1,&lcdHandle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(50), pdMS_TO_TICKS(5),pdMS_TO_TICKS(5));
+
 
     TaskHandle_t scanHandle = NULL;
-    vSchedulerPeriodicTaskCreate(taskScanner, "scanner", 1020, (void *)&data, 1, &scanHandle, pdMS_TO_TICKS(0), pdMS_TO_TICKS(15), pdMS_TO_TICKS(5), pdMS_TO_TICKS(5));
-
+    vSchedulerPeriodicTaskCreate (taskScanner,"scanner",1020 ,(void *)&data,1,&scanHandle ,pdMS_TO_TICKS(0),pdMS_TO_TICKS(50), pdMS_TO_TICKS(5),pdMS_TO_TICKS(5));
     vSchedulerStart();
 
     //---------------------------------------------------------
