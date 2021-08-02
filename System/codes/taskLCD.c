@@ -19,7 +19,7 @@ void taskLCD(void *data)
     {
         printf("%s\n", lcd.data);
         printf("key pressed: %u\n", key.key);
-        printf("led %s\n", led.led_color == verde ? "verde\0" : "vermelho\0");
+        printf("led %s %s\n", led.led_color == verde ? "verde\0" : "vermelho\0",led.state == 1 ? "Ligado":"Desligado" );
         printf("sensor 1 data: %f\n", sensorsData.sensor1);
         printf("sensor 2 data: %f\n", sensorsData.sensor2);
         printf("CPU use: %.2f\n", systemUse);

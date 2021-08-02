@@ -1,6 +1,6 @@
 #include <System.h>
 
-char * lcdMsg_pressed = "Botão pressionadoi\n";
+char * lcdMsg_pressed = "Botão pressionado\n";
 char * lcdMsg_npressed = "";
 
 void userTask(void * data){
