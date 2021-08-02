@@ -167,7 +167,7 @@ int main(void)
     cpu = 0;
     led.state = 0;
     led.led_color = verde;
-
+    key.key = 0;
     struct systemData data;
     data.mb_lcd = xQueueCreate(1, sizeof(struct LCDData));
     data.mb_cpu = xQueueCreate(1, sizeof(cpuUse));
@@ -180,7 +180,9 @@ int main(void)
 
     xQueueOverwrite(data.mb_cpu, &cpu);
     xQueueOverwrite(data.mb_led, &led);
+    xQueueOverwrite(data.mb_key, &key);
 
+    
     //----Iniciando Tasks
 
     /*control Task*/
