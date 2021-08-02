@@ -20,9 +20,9 @@ void userTask(void * data){
     
     //xSchedulerSporadicJobCreate(taskLCD,"taskLcd",data,pdMS_TO_TICKS(10),pdMS_TO_TICKS(5));
 
-    if(key.key == '1'){
+    if(key.key > 0 && key.key <= 9 ){
         TaskHandle_t handler;
-	key.key='0';
+	//key.key='0';
         LCD.data = lcdMsg_pressed;
         xQueueOverwrite(userData->mb_key, &key);
         xQueueOverwrite(userData->mb_lcd, &LCD); 
